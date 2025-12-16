@@ -96,5 +96,4 @@ For self-reflection and AI assistant diagnostics, there's not a plugin solution,
 Define the Opening Message to serve as the first-turn system prompt execution, which should clearly establish the agent's identity, core mission, and its strategic approach to managing complexity. You may also add Opening Questions.
 
 #### Set Chat Preferences:
-
-- Review settings like Text-to-Speech (TTS) or other advanced display/input preferences.
+Review settings and optimize, such as limiting history message count to reduce context rot.
