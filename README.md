@@ -10,8 +10,21 @@ In addition to the LobeChat container, 3 other containers are created to handle 
 ### CLI
 The following commands are used to deploy and remove the lobe chat service:
 ```
-./cli up
-./cli down
+./cli.sh up
+./cli.sh down
+```
+The following command is used to back up the persistent data for cloud storage:
+```
+./cli.sh down
+./backup.sh
+./cli.sh up
+```
+The following command is used to restore the persistent data from backup:
+```
+./cli.sh down
+./restore.sh <postgres_backup_file_name.tar.gz>
+./restore.sh <minio_backup_file_name.tar.gz>
+./cli.sh up
 ```
 
 ### Data Persistence
