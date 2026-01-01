@@ -3,7 +3,9 @@
 ## Introduction
 This is a small project that uses docker to host a local instance of LobeChat, enabling the additional power a wrapper like LobeChat provides (role configuration, file context, etc.) around the user's existing AI models (such as Gemini or Claude, linked with API keys).
 
-In addition to the LobeChat container, 3 other containers are created to handle data storage and auth (postgres, minio, and logto). 
+Along with the LobeChat container, 3 other containers are created to handle data storage and auth (postgres, minio, and logto). 
+
+Additionally, this project includes a custom LobeChat plugin that allows the LobeChat AIs to access github repositories using a personal access token provided by the user. Set this and other user specific variables in the .env file.
 
 ## Infrastructure Setup
 
