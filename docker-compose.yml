@@ -78,16 +78,10 @@ services:
       dockerfile: Dockerfile
     container_name: lobe-github-plugin
     ports:
-      - "8001:8000"  # Map host port 8001 to container port 8000 (avoid conflict)
+      - "8000:8000"
     environment:
       - GITHUB_TOKEN=${GITHUB_TOKEN:-}  # Optional GitHub token from .env file
       - LOG_LEVEL=INFO
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
     restart: unless-stopped
 
   lobe-chat:
@@ -103,7 +97,7 @@ services:
       logto:
         condition: service_healthy
       github-repo-access:
-        condition: service_healthy
+        condition: service_started
     environment:
       # Database
       - DATABASE_URL=${LOBE_DB_URL}

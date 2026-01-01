@@ -107,6 +107,8 @@ Install and enable and necessary tools, the two plugins below are the most impor
 
 For self-reflection and AI assistant diagnostics, there's not a plugin solution, but one possiblility is to run a langfuse docker instance and link lobe-chat to it, then provide the observed data to the AI Coordinator. I've decided not to do this for now, so that is not included in this project.
 
+Additionally, to enable the custom github plugin, `add plugin` and use the url `http://localhost:8000/manifest.json`.
+
 #### Set the Opening Settings:
 Define the Opening Message to serve as the first-turn system prompt execution, which should clearly establish the agent's identity, core mission, and its strategic approach to managing complexity. You may also add Opening Questions.
 

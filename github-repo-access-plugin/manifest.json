@@ -1,20 +1,90 @@
 {
-  "identifier": "github-repo-access",
-  "name": "GitHub Repository Access",
-  "description": "Browse and read files from GitHub repositories",
-  "version": "1.0.0",
-  "author": "Jarran Pedersen",
-  "homepage": "",
-  "openapi": "/openapi.json",
-  "apiBase": "/api",
-  "settings": [
+  "api": [
     {
-      "key": "githubToken",
-      "name": "GitHub Token",
-      "description": "Optional GitHub Personal Access Token",
-      "type": "string",
-      "defaultValue": "",
-      "secure": true
+      "url": "http://localhost:8000/api/repos/{owner}/{repo}/structure",
+      "name": "getRepoStructure",
+      "description": "Get repository file and folder structure",
+      "parameters": {
+        "type": "object",
+        "required": ["owner", "repo"],
+        "properties": {
+          "owner": {
+            "description": "GitHub repository owner (username or organization)",
+            "type": "string"
+          },
+          "repo": {
+            "description": "GitHub repository name",
+            "type": "string"
+          },
+          "path": {
+            "description": "Path within repository (defaults to root)",
+            "type": "string"
+          },
+          "branch": {
+            "description": "Branch name (defaults to default branch)",
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "url": "http://localhost:8000/api/repos/{owner}/{repo}/files/{file_path}",
+      "name": "readFile",
+      "description": "Read a file from a GitHub repository",
+      "parameters": {
+        "type": "object",
+        "required": ["owner", "repo", "file_path"],
+        "properties": {
+          "owner": {
+            "description": "GitHub repository owner (username or organization)",
+            "type": "string"
+          },
+          "repo": {
+            "description": "GitHub repository name",
+            "type": "string"
+          },
+          "file_path": {
+            "description": "Full path to the file within the repository",
+            "type": "string"
+          },
+          "branch": {
+            "description": "Branch name (defaults to default branch)",
+            "type": "string"
+          }
+        }
+      }
     }
-  ]
+  ],
+  "author": "Jarran Pedersen",
+  "createAt": "",
+  "gateway": "",
+  "homepage": "",
+  "identifier": "github-repo-access",
+  "meta": {
+    "avatar": "",
+    "description": "Browse and read files from GitHub repositories",
+    "tags": [
+      "github",
+      "repository",
+      "code"
+    ],
+    "title": "GitHub Repository Access"
+  },
+  "settings": {
+    "type": "object",
+    "properties": {
+      "githubToken": {
+        "title": "GitHub Token",
+        "description": "Optional GitHub Personal Access Token for private repos or higher rate limits",
+        "type": "string",
+        "default": "",
+        "secure": true
+      }
+    }
+  },
+  "systemRole": "",
+  "type": "default",
+  "ui": {
+    "url": "http://localhost:8000/"
+  }
 }

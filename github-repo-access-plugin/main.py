@@ -150,23 +150,3 @@ async def get_manifest():
             status_code=500,
             detail={"error": "InvalidManifest", "message": f"Invalid JSON in manifest: {str(e)}"}
         )
-    
-@app.get("/openapi.json", include_in_schema=False)
-async def get_openapi_spec():
-    """Return OpenAPI specification for LobeChat plugin integration."""
-    try:
-        openapi_path = PLUGIN_DIR / "openapi.json"
-        with open(openapi_path, 'r', encoding='utf-8') as f:
-            openapi_data = json.load(f)
-        return JSONResponse(openapi_data)
-    except FileNotFoundError:
-        # Fallback to generating OpenAPI from FastAPI
-        raise HTTPException(
-            status_code=404,
-            detail={"error": "OpenAPINotFound", "message": "openapi.json file not found"}
-        )
-    except json.JSONDecodeError as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"error": "InvalidOpenAPI", "message": f"Invalid JSON in openapi.json: {str(e)}"}
-        )
