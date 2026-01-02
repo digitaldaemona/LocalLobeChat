@@ -4,16 +4,29 @@ Provides endpoints to browse repository structure and read file contents.
 """
 import os
 from datetime import datetime
-from typing import Optional, List, Dict, Any
+from typing import Optional, List
 import json
 from pathlib import Path
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from github_client import GitHubClient
 PLUGIN_DIR = Path(__file__).parent
+
+# Request models for POST endpoints
+class RepoStructureRequest(BaseModel):
+    owner: str
+    repo: str
+    path: Optional[str] = ""
+    branch: Optional[str] = ""
+
+class ReadFileRequest(BaseModel):
+    owner: str
+    repo: str
+    file_path: str
+    branch: Optional[str] = ""
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -68,21 +81,15 @@ async def health_check():
         "timestamp": datetime.utcnow().isoformat()
     }
 
-@app.get("/api/repos/{owner}/{repo}/structure", response_model=RepositoryStructure)
-async def get_repo_structure(
-    owner: str,
-    repo: str,
-    path: Optional[str] = Query("", description="Path within repository (defaults to root)"),
-    branch: Optional[str] = Query("", description="Branch name (defaults to default branch)")
-) -> RepositoryStructure:
+@app.post("/api/repos/structure", response_model=RepositoryStructure)
+async def get_repo_structure(request: RepoStructureRequest) -> RepositoryStructure:
     """Get repository file and folder structure."""
     try:
-        # Get repository structure from GitHub client
         structure_data = await github_client.get_repository_structure(
-            owner=owner,
-            repo=repo,
-            path=path if path else "/",
-            branch=branch if branch else None
+            owner=request.owner,
+            repo=request.repo,
+            path=request.path if request.path else "/",
+            branch=request.branch if request.branch else None
         )
         
         return RepositoryStructure(**structure_data)
@@ -92,7 +99,7 @@ async def get_repo_structure(
         if "404" in error_msg or "Not Found" in error_msg:
             raise HTTPException(
                 status_code=404,
-                detail={"error": "RepositoryNotFound", "message": f"Repository {owner}/{repo} not found"}
+                detail={"error": "RepositoryNotFound", "message": f"Repository {request.owner}/{request.repo} not found"}
             )
         else:
             raise HTTPException(
@@ -100,21 +107,15 @@ async def get_repo_structure(
                 detail={"error": "GitHubAPIError", "message": f"Error accessing GitHub API: {error_msg}"}
             )
 
-@app.get("/api/repos/{owner}/{repo}/files/{file_path}", response_model=FileContent)
-async def read_file(
-    owner: str,
-    repo: str,
-    file_path: str,
-    branch: Optional[str] = Query("", description="Branch name (defaults to default branch)")
-) -> FileContent:
+@app.post("/api/repos/files", response_model=FileContent)
+async def read_file(request: ReadFileRequest) -> FileContent:
     """Read a file from a GitHub repository."""
     try:
-        # Get file content from GitHub client
         file_data = await github_client.get_file_content(
-            owner=owner,
-            repo=repo,
-            file_path=file_path,
-            branch=branch if branch else None
+            owner=request.owner,
+            repo=request.repo,
+            file_path=request.file_path,
+            branch=request.branch if request.branch else None
         )
         
         return FileContent(**file_data)
@@ -124,7 +125,7 @@ async def read_file(
         if "404" in error_msg or "Not Found" in error_msg:
             raise HTTPException(
                 status_code=404,
-                detail={"error": "FileNotFound", "message": f"File {file_path} not found in {owner}/{repo}"}
+                detail={"error": "FileNotFound", "message": f"File {request.file_path} not found in {request.owner}/{request.repo}"}
             )
         else:
             raise HTTPException(
